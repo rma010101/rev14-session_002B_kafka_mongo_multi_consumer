@@ -1,6 +1,6 @@
 # Kafka + MongoDB + Redis Multi-Consumer Node.js Example
 
-This project demonstrates how to use Apache Kafka with Node.js, MongoDB, and Redis for a multi-consumer order processing scenario with caching optimization.
+This project demonstrates how to use Apache Kafka with Node.js, MongoDB, and Redis for a **multi-consumer** order processing scenario with caching optimization. **Two consumers** will run simultaneously to process messages from the same Kafka topic, showing load distribution and parallel processing.
 
 ## Node.js Dependencies & Installation
 
@@ -79,26 +79,36 @@ Ensure MongoDB is running on the default port `27017`. The consumer will connect
 ### 5. Start Redis
 Ensure Redis is running on the default port `6379` for caching functionality.
 
-### 6. Run the Consumer
+### 6. Run Multiple Consumers (Multi-Consumer Setup)
 ```
+# Terminal 1 - Start first consumer
+node consumer.js
+
+# Terminal 2 - Start second consumer (in a new terminal)
 node consumer.js
 ```
 
+> **Important:** This project demonstrates a **multi-consumer** architecture. Run **2 consumers** in separate terminals to see how multiple consumers can process messages from the same Kafka topic.
+
 ### 7. Run the Producer
 ```
+# Terminal 3 - Start producer (in a new terminal)
 node producer.js
 ```
 
+The producer will send messages, and you'll see both consumers receiving and processing the messages, demonstrating load balancing across multiple consumer instances.
+
 ## Files
 - `producer.js`: Sends order messages to Kafka topic with order details (orderId, productId, quantity).
-- `consumer.js`: Listens for order messages, updates product stock in MongoDB, and uses Redis for caching product data.
+- `consumer.js`: Listens for order messages, updates product stock in MongoDB, and uses Redis for caching product data. **Run 2 instances** for multi-consumer setup.
 - `package.json`: Node.js dependencies and project configuration.
 
 ## Key Features
 
 ### Multi-Consumer Architecture
 - **Producer**: Sends order messages to Kafka topic
-- **Consumer**: Processes orders and updates stock levels
+- **Multiple Consumers**: **2 consumer instances** process orders simultaneously and update stock levels
+- **Load Balancing**: Messages are distributed between consumer instances
 - **MongoDB Integration**: Stores product data in `ecommerce.products` collection
 - **Redis Caching**: Improves performance by caching frequently accessed product data
 
@@ -108,12 +118,15 @@ node producer.js
 - **Cache Invalidation**: Redis cache cleared after stock updates
 
 ### Data Flow
-1. Producer sends order message to Kafka
-2. Consumer receives message and extracts productId and quantity
-3. Consumer checks Redis cache for product data
-4. If cache miss, fetches from MongoDB
-5. Updates product stock in MongoDB
-6. Invalidates Redis cache for updated product
+1. Producer sends order message to Kafka topic
+2. **Multiple consumers** (2 instances) compete to receive messages
+3. Each consumer receives message and extracts productId and quantity
+4. Consumer checks Redis cache for product data
+5. If cache miss, fetches from MongoDB
+6. Updates product stock in MongoDB
+7. Invalidates Redis cache for updated product
+
+> **Multi-Consumer Behavior**: Messages are distributed between the 2 consumer instances, demonstrating load balancing and parallel processing capabilities.
 
 ## Monitoring & Logs
 
@@ -149,6 +162,8 @@ C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-consumer-groups.bat --bootstrap-serv
 ## Learning Points
 - How to set up and run Kafka and ZooKeeper on Windows
 - How to produce and consume messages with `kafka-node` in Node.js
+- **How to implement multi-consumer architecture with load balancing**
+- **How multiple consumers can process messages from the same topic**
 - How to integrate MongoDB for data persistence
 - How to implement Redis caching for performance optimization
 - How to handle cache invalidation strategies
