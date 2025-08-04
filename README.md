@@ -95,6 +95,10 @@ kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic my-order-up
 > **Note:** These console consumers will show you the raw JSON messages being sent by the producer, allowing you to monitor the message flow in real-time. **Start these first** to capture all messages from the beginning.
 
 ### 7. Run Multiple Consumers (Multi-Consumer Setup)
+
+You have two options to run the consumers:
+
+#### Option 1: Direct Node.js Command
 ```
 # Terminal 5 - Start first consumer
 node consumer.js
@@ -103,13 +107,43 @@ node consumer.js
 node consumer.js
 ```
 
+#### Option 2: Using Batch Files (Alternative)
+```
+# Terminal 5 - Start first consumer using batch file
+consumer.bat
+
+# Terminal 6 - Start second consumer using batch file
+consumer.bat
+```
+
 > **Important:** This project demonstrates a **multi-consumer** architecture. Run **2 consumers** in separate terminals to see how multiple consumers can process messages from the same Kafka topic.
 
 ### 8. Run the Producer
+
+You have two options to run the producer:
+
+#### Option 1: Direct Node.js Command
 ```
 # Terminal 7 - Start producer (in a new terminal)
 node producer.js
 ```
+
+#### Option 2: Using Batch File (Alternative)
+First, create a `producer.bat` file in your project directory:
+```batch
+@echo off
+echo Starting Kafka Producer...
+node producer.js
+pause
+```
+
+Then run:
+```
+# Terminal 7 - Start producer using batch file
+producer.bat
+```
+
+> **Note:** The batch file option is useful for Windows users who prefer double-clicking to run the producer or want to keep the terminal open after execution.
 
 The producer will send messages, and you'll see the console consumers displaying the raw messages FIRST, then both Node.js consumers processing those messages, demonstrating complete message flow visibility.
 
@@ -131,6 +165,8 @@ For the full multi-consumer demonstration with monitoring, you'll need **7 termi
 - `producer.js`: Sends order messages to Kafka topic with order details (orderId, productId, quantity).
 - `consumer.js`: Listens for order messages, updates product stock in MongoDB, and uses Redis for caching product data. **Run 2 instances** for multi-consumer setup.
 - `package.json`: Node.js dependencies and project configuration.
+- `producer.bat` (optional): Windows batch file to run the producer with helpful messages and pause.
+- `consumer.bat` (optional): Windows batch file to run the consumer with helpful messages and pause.
 
 ## Key Features
 
