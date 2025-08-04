@@ -115,6 +115,37 @@ node producer.js
 5. Updates product stock in MongoDB
 6. Invalidates Redis cache for updated product
 
+## Monitoring & Logs
+
+### Application Logs
+- **Consumer logs**: Displayed in the terminal where you run `node consumer.js`
+- **Producer logs**: Displayed in the terminal where you run `node producer.js`
+
+### Kafka Logs
+- **Kafka Server logs**: `C:\kafka\kafka_2.13-3.9.1\logs\server.log`
+- **Kafka data logs**: `C:\kafka\kafka_2.13-3.9.1\kafka-logs\` (topic partitions and metadata)
+- **ZooKeeper logs**: `C:\kafka\kafka_2.13-3.9.1\logs\zookeeper.log`
+
+### Monitor Kafka Topics
+```bash
+# List all topics
+C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
+
+# Monitor messages in real-time
+C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-console-consumer.bat --topic my-order-updates2 --from-beginning --bootstrap-server localhost:9092
+
+# Check consumer group status
+C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-consumer-groups.bat --bootstrap-server localhost:9092 --list
+```
+
+### MongoDB Logs
+- **Default location**: `C:\Program Files\MongoDB\Server\{version}\log\mongod.log`
+- **Custom location**: Check your MongoDB configuration file for log path
+
+### Redis Logs
+- **Console output**: Redis logs appear in the terminal where you started `redis-server`
+- **Log file**: Can be configured in `redis.conf` if using configuration file
+
 ## Learning Points
 - How to set up and run Kafka and ZooKeeper on Windows
 - How to produce and consume messages with `kafka-node` in Node.js
@@ -123,5 +154,6 @@ node producer.js
 - How to handle cache invalidation strategies
 - How to process order data and update inventory in real-time
 - How to resolve common Kafka startup errors (e.g., cluster ID mismatch)
+- How to monitor and debug distributed systems using logs
 
 ---
