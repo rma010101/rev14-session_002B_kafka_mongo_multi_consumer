@@ -90,13 +90,41 @@ node consumer.js
 
 > **Important:** This project demonstrates a **multi-consumer** architecture. Run **2 consumers** in separate terminals to see how multiple consumers can process messages from the same Kafka topic.
 
-### 7. Run the Producer
+### 7. Monitor Messages with Console Consumers (Optional)
+To monitor the messages being sent by the producer, you can create additional Kafka console consumers:
+
 ```
-# Terminal 3 - Start producer (in a new terminal)
+# Terminal 4 - Monitor messages (Consumer 1)
+cd C:\kafka\kafka_2.13-3.9.1\bin\windows
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic my-order-updates2 --from-beginning
+
+# Terminal 5 - Monitor messages (Consumer 2) 
+cd C:\kafka\kafka_2.13-3.9.1\bin\windows
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic my-order-updates2 --from-beginning
+```
+
+> **Note:** These console consumers will show you the raw JSON messages being sent by the producer, allowing you to monitor the message flow in real-time.
+
+### 8. Run the Producer
+```
+# Terminal 6 - Start producer (in a new terminal)
 node producer.js
 ```
 
-The producer will send messages, and you'll see both consumers receiving and processing the messages, demonstrating load balancing across multiple consumer instances.
+The producer will send messages, and you'll see both Node.js consumers processing the messages AND the console consumers displaying the raw messages, demonstrating complete message flow visibility.
+
+## Complete Setup Summary
+
+For the full multi-consumer demonstration with monitoring, you'll need **6 terminals**:
+
+1. **Terminal 1**: ZooKeeper (`zookeeper-server-start.bat`)
+2. **Terminal 2**: Kafka Server (`kafka-server-start.bat`)  
+3. **Terminal 3**: Node.js Consumer 1 (`node consumer.js`)
+4. **Terminal 4**: Node.js Consumer 2 (`node consumer.js`)
+5. **Terminal 5**: Console Consumer Monitor (`kafka-console-consumer.bat`)
+6. **Terminal 6**: Producer (`node producer.js`)
+
+> **Optional**: Add Terminal 7 for a second console consumer monitor for even more visibility.
 
 ## Files
 - `producer.js`: Sends order messages to Kafka topic with order details (orderId, productId, quantity).
@@ -140,15 +168,27 @@ The producer will send messages, and you'll see both consumers receiving and pro
 - **ZooKeeper logs**: `C:\kafka\kafka_2.13-3.9.1\logs\zookeeper.log`
 
 ### Monitor Kafka Topics
+
+#### Real-time Message Monitoring
+To see the actual messages being sent by the producer:
+```bash
+# Console Consumer 1 - Monitor all messages
+C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-console-consumer.bat --topic my-order-updates2 --from-beginning --bootstrap-server localhost:9092
+
+# Console Consumer 2 - Monitor new messages only
+C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-console-consumer.bat --topic my-order-updates2 --bootstrap-server localhost:9092
+```
+
+#### Topic Management Commands
 ```bash
 # List all topics
 C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
 
-# Monitor messages in real-time
-C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-console-consumer.bat --topic my-order-updates2 --from-beginning --bootstrap-server localhost:9092
-
 # Check consumer group status
 C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-consumer-groups.bat --bootstrap-server localhost:9092 --list
+
+# Describe topic details
+C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-topics.bat --describe --topic my-order-updates2 --bootstrap-server localhost:9092
 ```
 
 ### MongoDB Logs
