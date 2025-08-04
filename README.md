@@ -133,6 +133,9 @@ function sendOrderMessageMultiPartition(order, partition = null) {
 
 ### Prerequisites
 1. **Apache Kafka** (with Zookeeper)
+   - Download from: https://kafka.apache.org/downloads
+   - Extract to a directory (e.g., `/path/to/kafka_2.13-3.9.1`)
+   - Note: Replace `/path/to/kafka_2.13-3.9.1` with your actual Kafka installation path
 2. **MongoDB**
 3. **Redis**
 4. **Node.js**
@@ -146,21 +149,25 @@ function sendOrderMessageMultiPartition(order, partition = null) {
 
 2. **Start Services**
    ```bash
+   # Navigate to Kafka installation directory first
+   cd /path/to/kafka_2.13-3.9.1
+   
    # Start Zookeeper
    bin/zookeeper-server-start.sh config/zookeeper.properties
    
-   # Start Kafka Server
+   # Start Kafka Server (in a new terminal, same directory)
    bin/kafka-server-start.sh config/server.properties
    
-   # Start MongoDB
+   # Start MongoDB (in a new terminal)
    mongod
    
-   # Start Redis
+   # Start Redis (in a new terminal)
    redis-server
    ```
 
 3. **Create Kafka Topic**
    ```bash
+   # From Kafka installation directory (/path/to/kafka_2.13-3.9.1)
    bin/kafka-topics.sh --create --topic my-order-updates2 --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
    ```
 
@@ -269,6 +276,9 @@ if (newStock >= 0) {
 
 ### Debug Commands
 ```bash
+# Navigate to Kafka installation directory first
+cd /path/to/kafka_2.13-3.9.1
+
 # List Kafka topics
 bin/kafka-topics.sh --list --bootstrap-server localhost:9092
 
