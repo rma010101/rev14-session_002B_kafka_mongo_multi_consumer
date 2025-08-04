@@ -120,30 +120,40 @@ consumer.bat
 
 ### 8. Run the Producer
 
-You have two options to run the producer:
+You have **multiple options** for sending messages to the Kafka topic:
 
-#### Option 1: Direct Node.js Command
+#### Option A: Node.js Producer (Recommended)
 ```
-# Terminal 7 - Start producer (in a new terminal)
+# Terminal 7 - Start Node.js producer (in a new terminal)
 node producer.js
 ```
 
-#### Option 2: Using Batch File (Alternative)
-First, create a `producer.bat` file in your project directory:
-```batch
-@echo off
-echo Starting Kafka Producer...
-node producer.js
-pause
-```
+This runs your custom Node.js application that automatically sends structured order messages with JSON data (orderId, productId, quantity).
 
-Then run:
+#### Option B: Using Batch File (Windows Alternative)
+First, create a `producer.bat` file in your project directory (already included):
 ```
 # Terminal 7 - Start producer using batch file
 producer.bat
 ```
 
-> **Note:** The batch file option is useful for Windows users who prefer double-clicking to run the producer or want to keep the terminal open after execution.
+This executes the same Node.js producer with helpful Windows batch file features (messages, pause on completion).
+
+#### Option C: Kafka Console Producer (Manual Testing Alternative)
+If you prefer to send messages manually or want to test without the Node.js producer:
+
+```
+# Terminal 7 (Alternative) - Manual console producer
+cd C:\kafka\kafka_2.13-3.9.1\bin\windows
+kafka-console-producer.bat --topic my-order-updates2 --bootstrap-server localhost:9092
+
+# Then type JSON messages manually in the terminal, for example:
+{"orderId": 1, "productId": 101, "quantity": 2}
+{"orderId": 2, "productId": 102, "quantity": 1}
+{"orderId": 3, "productId": 103, "quantity": 3}
+```
+
+> **Choose one option**: Use either the Node.js producer (A or B) OR the console producer (C), not multiple simultaneously for testing.
 
 The producer will send messages, and you'll see the console consumers displaying the raw messages FIRST, then both Node.js consumers processing those messages, demonstrating complete message flow visibility.
 
@@ -155,9 +165,12 @@ For the full multi-consumer demonstration with monitoring, you'll need **7 termi
 2. **Terminal 2**: Kafka Server (`kafka-server-start.bat`)  
 3. **Terminal 3**: Console Consumer Monitor 1 (`kafka-console-consumer.bat`)
 4. **Terminal 4**: Console Consumer Monitor 2 (`kafka-console-consumer.bat`)
-5. **Terminal 5**: Node.js Consumer 1 (`node consumer.js`)
-6. **Terminal 6**: Node.js Consumer 2 (`node consumer.js`)
-7. **Terminal 7**: Producer (`node producer.js`)
+5. **Terminal 5**: Node.js Consumer 1 (`node consumer.js` or `consumer.bat`)
+6. **Terminal 6**: Node.js Consumer 2 (`node consumer.js` or `consumer.bat`)
+7. **Terminal 7**: Producer - Choose one:
+   - **Option A**: Node.js Producer (`node producer.js`) - Recommended
+   - **Option B**: Batch File Producer (`producer.bat`) - Windows alternative
+   - **Option C**: Console Producer (`kafka-console-producer.bat`) - Manual testing
 
 > **Recommended Order**: Start monitoring console consumers (3-4) before Node.js consumers (5-6) to capture all messages from the beginning.
 
@@ -228,6 +241,18 @@ C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-consumer-groups.bat --bootstrap-serv
 C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-topics.bat --describe --topic my-order-updates2 --bootstrap-server localhost:9092
 ```
 
+#### Manual Message Production Commands
+```bash
+# Start console producer for manual message sending
+C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-console-producer.bat --topic my-order-updates2 --bootstrap-server localhost:9092
+
+# Example messages to type in console producer:
+{"orderId": 1, "productId": 101, "quantity": 3}
+{"orderId": 2, "productId": 102, "quantity": 1}
+{"orderId": 3, "productId": 103, "quantity": 5}
+{"orderId": 4, "productId": 101, "quantity": 2}
+```
+
 ### MongoDB Logs
 - **Default location**: `C:\Program Files\MongoDB\Server\{version}\log\mongod.log`
 - **Custom location**: Check your MongoDB configuration file for log path
@@ -247,5 +272,32 @@ C:\kafka\kafka_2.13-3.9.1\bin\windows\kafka-topics.bat --describe --topic my-ord
 - How to process order data and update inventory in real-time
 - How to resolve common Kafka startup errors (e.g., cluster ID mismatch)
 - How to monitor and debug distributed systems using logs
+
+## Common Issues & Troubleshooting
+
+### Kafka Connection Issues
+- Ensure ZooKeeper is started before Kafka
+- Check if ports 2181 (ZooKeeper) and 9092 (Kafka) are available
+- Verify topic exists before running consumer: `kafka-topics.bat --list --bootstrap-server localhost:9092`
+
+### MongoDB Connection Issues
+- Ensure MongoDB service is running on port 27017
+- Check connection string in consumer.js: `mongodb://localhost:27017`
+- Verify database and collection permissions for `ecommerce.products`
+
+### Redis Connection Issues
+- Ensure Redis server is running on port 6379
+- Check Redis configuration if using custom settings
+- Verify Redis client connection in consumer.js
+
+### Node.js Package Issues
+- Run `npm install` to ensure all dependencies are installed
+- Check Node.js version compatibility (Node.js 14+ recommended)
+- Clear npm cache if encountering installation issues: `npm cache clean --force`
+
+### Multi-Consumer Load Balancing Issues
+- Both consumers should belong to the same consumer group for load balancing
+- Messages will be distributed between the 2 consumer instances
+- If one consumer receives all messages, check consumer group configuration
 
 ---
